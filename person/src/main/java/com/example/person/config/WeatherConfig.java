@@ -1,4 +1,4 @@
-package com.example.weather.config;
+package com.example.person.config;
 
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;

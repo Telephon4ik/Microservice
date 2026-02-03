@@ -13,6 +13,7 @@
 		<module>person</module>
 		<module>location</module>
 		<module>weather</module>
+        <module>DiscoveryServer</module>
 	</modules>
 
 	<dependencyManagement>

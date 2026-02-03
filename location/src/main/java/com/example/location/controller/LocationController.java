@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,13 +18,17 @@ public class LocationController {
     @Autowired
     private GeodataRepository repository;
 
-    private RestTemplate restTemplate = new RestTemplate();
+    @Autowired
+    private RestTemplate restTemplate;
 
-    private final String weatherServiceUrl = "http://localhost:8082/weather";
+    private final String weatherServiceUrl = "http://weather-info-service/weather";
+
 
     @GetMapping
     public List<Geodata> getAllLocations() {
-        return (List<Geodata>) repository.findAll();
+        List<Geodata> list = new ArrayList<>();
+        repository.findAll().forEach(list::add);
+        return list;
     }
 
     @GetMapping(params = "name")
