@@ -4,9 +4,9 @@ import com.example.location.model.Geodata;
 import com.example.location.model.Weather;
 import com.example.location.repository.GeodataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,8 +21,8 @@ public class LocationController {
     @Autowired
     private RestTemplate restTemplate;
 
-    private final String weatherServiceUrl = "http://weather-info-service/weather";
-
+    @Value("${weather.url}")
+    private String weatherServiceName;
 
     @GetMapping
     public List<Geodata> getAllLocations() {
@@ -63,8 +63,10 @@ public class LocationController {
     public Weather getWeather(@RequestParam("name") String name) {
         Geodata geodata = repository.findByName(name)
                 .orElseThrow(() -> new RuntimeException("Location not found"));
-        String url = String.format("%s?lat=%s&lon=%s", weatherServiceUrl,
-                geodata.getLatitude(), geodata.getLongitude());
+
+        String url = String.format("http://%s/weather?lat=%s&lon=%s",
+                weatherServiceName, geodata.getLatitude(), geodata.getLongitude());
+
         return restTemplate.getForObject(url, Weather.class);
     }
 }
