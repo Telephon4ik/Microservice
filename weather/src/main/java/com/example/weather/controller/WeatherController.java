@@ -13,8 +13,7 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 public class WeatherController {
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private RestTemplate restTemplate = new RestTemplate(); // Исправлено
 
     @Autowired
     private WeatherCache weatherCache;
@@ -26,15 +25,13 @@ public class WeatherController {
     private String urlWeather;
 
     @GetMapping("/weather")
-    public Main getWeather(@RequestParam ("lat") String lat,
+    public Main getWeather(@RequestParam("lat") String lat,
                            @RequestParam("lon") String lon) {
 
         String cacheKey = lat + ":" + lon;
 
         Main cached = weatherCache.get(cacheKey);
-        if (cached != null) {
-            return cached;
-        }
+        if (cached != null) return cached;
 
         String request = String.format(
                 "%s?lat=%s&lon=%s&units=metric&appid=%s",
@@ -42,8 +39,9 @@ public class WeatherController {
         );
 
         Root root = restTemplate.getForObject(request, Root.class);
-        Main main = root.getMain();
+        if (root == null) throw new RuntimeException("Weather service error");
 
+        Main main = root.getMain();
         weatherCache.put(cacheKey, main);
 
         return main;
